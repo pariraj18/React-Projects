@@ -2,84 +2,36 @@ import React, { Component } from 'react'
 import NewsItem from './NewsItem'
 
 export class News extends Component {
-  articles=[
-    {
-      "source": {
-        "id": "cbc-news",
-        "name": "CBC News"
-      },
-      "author": "CBC News",
-      "title": "Cricket Canada president's home targeted in Surrey, B.C., shooting | CBC News",
-      "description": "The home of the newly elected president of Cricket Canada in Surrey, B.C., was the target of a shooting early Wednesday morning, the fifth estate has learned.",
-      "url": "http://www.cbc.ca/news/canada/cricket-canada-president-house-shooting-9.7206529",
-      "urlToImage": "https://i.cbc.ca/ais/37f17484-9393-4534-9907-f026ffcf53ba,1779316540819/full/max/0/default.jpg?im=Crop%2Crect%3D%280%2C270%2C5195%2C2922%29%3BResize%3D620",
-      "publishedAt": "2026-07-08T00:52:31.1658573Z",
-      "content": "The home of the newly elected president of Cricket Canada in Surrey, B.C., was the target of a shooting early Wednesday morning, the fifth estate has learned.\r\nArvinder Khosa confirmed his house, loc… [+4073 chars]"
-    },
-    {
-      "source": {
-        "id": "cbc-news",
-        "name": "CBC News"
-      },
-      "author": "CBC News",
-      "title": "Organized crime, death threats, match-fixing: Investigating allegations inside Cricket Canada | CBC Sports",
-      "description": "An investigation by the fifth estate has found threats made at a B.C. restaurant in July 2025 are part of a disturbing new trend inside Canada’s highest level of cricket of troubling actions by people claiming to be from the Bishnoi gang.",
-      "url": "http://www.cbc.ca/news/canada/cricket-canada-allegations-fifth-estate-9.7167081",
-      "urlToImage": "https://i.cbc.ca/ais/bbd764cd-83dd-469d-a3e2-83b0e8222849,1776369177665/full/max/0/default.jpg?im=Crop%2Crect%3D%280%2C450%2C8640%2C4860%29%3BResize%3D620",
-      "publishedAt": "2026-07-08T00:52:30.1192435Z",
-      "content": "The night was meant to be a celebration. Last July, a group of around 25 cricketers, fresh off a win at a major provincial tournament gathered at a restaurant in Surrey, B.C. \r\nAmidst the din of conv… [+22603 chars]"
-    },
-    {
-      "source": {
-        "id": "espn-cric-info",
-        "name": "ESPN Cric Info"
-      },
-      "author": null,
-      "title": "PCB hands Umar Akmal three-year ban from all cricket | ESPNcricinfo.com",
-      "description": "Penalty after the batsman pleaded guilty to not reporting corrupt approaches | ESPNcricinfo.com",
-      "url": "http://www.espncricinfo.com/story/_/id/29103103/pcb-hands-umar-akmal-three-year-ban-all-cricket",
-      "urlToImage": "https://a4.espncdn.com/combiner/i?img=%2Fi%2Fcricket%2Fcricinfo%2F1099495_800x450.jpg",
-      "publishedAt": "2020-04-27T11:41:47Z",
-      "content": "Umar Akmal's troubled cricket career has hit its biggest roadblock yet, with the PCB handing him a ban from all representative cricket for three years after he pleaded guilty of failing to report det… [+1506 chars]"
-    },
-    {
-      "source": {
-        "id": "espn-cric-info",
-        "name": "ESPN Cric Info"
-      },
-      "author": null,
-      "title": "What we learned from watching the 1992 World Cup final in full again | ESPNcricinfo.com",
-      "description": "Wides, lbw calls, swing - plenty of things were different in white-ball cricket back then | ESPNcricinfo.com",
-      "url": "http://www.espncricinfo.com/story/_/id/28970907/learned-watching-1992-world-cup-final-full-again",
-      "urlToImage": "https://a4.espncdn.com/combiner/i?img=%2Fi%2Fcricket%2Fcricinfo%2F1219926_1296x729.jpg",
-      "publishedAt": "2020-03-30T15:26:05Z",
-      "content": "Last week, we at ESPNcricinfo did something we have been thinking of doing for eight years now: pretend-live ball-by-ball commentary for a classic cricket match. We knew the result, yes, but we tried… [+6823 chars]"
-    }
-  ]
+  
   constructor() {
     super();
     console.log("Hello I am a constructor from news component");
     this.state = {
-     articles: this.articles,
+     articles: [],
       loading: false
     }
+  }
+  componentDidMount() {
+     let url = "https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=7dbf7009390249a59906ef18c7207329";
+     let data = fetch(url);
+     data.then((response) => {
+       return response.json();
+     }).then((parsedData) => {
+       console.log(parsedData);
+       this.setState({ articles: parsedData.articles })
+     })
+
+
   }
   render() {
     return (
       <div className='container my-3'>
-        <h2>NewsBird- Top Headlines</h2>
-        
-        <div className="row">
-          <div className="col-md-4">
-            <NewsItem title="My Title" description="My Description" imageurl="https://i.cbc.ca/ais/37f17484-9393-4534-9907-f026ffcf53ba,1779316540819/full/max/0/default.jpg?im=Crop%2Crect%3D%280%2C270%2C5195%2C2922%29%3BResize%3D620" newsurl="TODO"/>
+        <h1>NewsBird- Top Headlines</h1>
+        {this.state.articles.map((element) => {
+          return <div className="col-md-4" key={element.url}>
+            <NewsItem title={element.title ? element.title.slice(0, 45) : ""} description={element.description ? element.description.slice(0, 88) : ""} imageUrl={element.urlToImage} newsUrl={element.url}  className="one-line"/>
           </div>
-          <div className="col-md-4">
-            <NewsItem title="My Title" description="My Description"/>
-          </div>
-          <div className="col-md-4">
-            <NewsItem title="My Title" description="My Description"/>
-          </div>
-        </div>
+        })}
       </div>
     )
   }
