@@ -15,31 +15,43 @@ export class News extends Component {
     pageSize: PropTypes.number,
     category: PropTypes.string,
   }
+  
+  // 👇️ If you only need to capitalize the first letter
+   capitalizeFirstLetter =(str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
 
-  constructor() {
-    super();
+
+  constructor(props) {
+    super(props);
     this.state = {
       articles: [],
       loading: false,
       page: 1,
       totalResults: 0
     }
-  }
-
+   document.title = `${this.capitalizeFirstLetter(this.props.category || 'general')} - NewsBird`; 
+  } 
   async updateNews() {
-    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=dbe57b028aeb41e285a226a94865f7a7&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    const API_KEY = "7dbf7009390249a59906ef18c7207329";
+    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${API_KEY}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     
     this.setState({loading: true});
+    try{
     let data = await fetch(url);
     let parsedData = await data.json();
     
     this.setState({
-      articles: parsedData.articles,
-      totalResults: parsedData.totalResults,
+      articles: parsedData.articles || [],
+      totalResults: parsedData.totalResults || 0,
       loading: false
     })
   }
-
+  catch(error) {
+    console.error("Error fetching news data:", error);
+    this.setState({loading: false});
+  }
+  }
   async componentDidMount() {
     this.updateNews();
   }
@@ -57,7 +69,7 @@ export class News extends Component {
   render() {
     return (
       <div className="container my-3">
-        <h1 className="text-center" style={{margin: '35px 0px'}}>NewsBird896 - Top {this.props.category} Headlines</h1>
+        <h1 className="text-center" style={{margin: '35px 0px'}}>NewsBird- Top  { this.capitalizeFirstLetter(this.props.category) } Headlines</h1>
         
         {this.state.loading && <Spinner/>}
         
