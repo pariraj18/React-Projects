@@ -9,13 +9,15 @@ export class NewsItem extends Component {
   }
 
   render() {
-    let {title, description, imageUrl, newsUrl, author, publishedAt} = this.props;
+    let {title, description, imageUrl, newsUrl, author, publishedAt, source} = this.props;
     
     return (
       <div className='my-3'>
         <div className="card" style={{width: "18rem"}}>
-          
+          <div style={{display: 'flex', justifyContent: 'flex-end', position: 'absolute', right: '0'}}>
+          <span className=" badge rounded-pill bg-danger">{source}</span>
           {/* Sirf tabhi img dikhao jab imageUrl ho AUR error na aayi ho */}
+          </div>
           {imageUrl && !this.state.imageError && 
             <img 
               src={imageUrl} 
