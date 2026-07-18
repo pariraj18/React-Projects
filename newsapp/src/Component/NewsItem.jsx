@@ -1,15 +1,10 @@
-import React, { Component } from 'react'
+import React,{useState} from 'react'
 
-export class NewsItem extends Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      imageError: false  // image fail hui ya nahi track karenge
-    }
-  }
+  const NewsItem = (props) => {
+  
 
-  render() {
-    let {title, description, imageUrl, newsUrl, author, publishedAt, source} = this.props;
+    let {title, description, imageUrl, newsUrl, author, publishedAt, source} = props;
+    const[imageError,setImageError]=useState(false);
     
     return (
       <div className='my-3'>
@@ -18,12 +13,12 @@ export class NewsItem extends Component {
           <span className=" badge rounded-pill bg-danger">{source}</span>
           {/* Sirf tabhi img dikhao jab imageUrl ho AUR error na aayi ho */}
           </div>
-          {imageUrl && !this.state.imageError && 
+          {imageUrl && !imageError && 
             <img 
               src={imageUrl} 
               alt="news"
               referrerPolicy="no-referrer" 
-              onError={() => this.setState({imageError: true})} // error aayi to state change
+              onError={() => setImageError(true)} // error aayi to state change
               style={{height: '200px', objectFit: 'cover'}}
             />
           }
@@ -37,7 +32,7 @@ export class NewsItem extends Component {
         </div>
       </div>
     )
-  }
+  
 }
 
 export default NewsItem
