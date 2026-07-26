@@ -1,6 +1,6 @@
 import './App.css'
 import React, { useState } from 'react'
-import NavBar from './Component/NavBar';  // 1. Component s nahi hai 2. B capital hai
+import NavBar from './Component/Navbar';  // 1. Component s nahi hai 2. B capital hai
 import News from './Component/News';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // 3. Switch hata diya
 import LoadingBar from 'react-top-loading-bar'
