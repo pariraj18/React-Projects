@@ -11,6 +11,7 @@ const News = (props)=>{
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const [totalResults, setTotalResults] = useState(0)
+    const safeArticles = Array.isArray(articles) ? articles : []
     
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -73,19 +74,19 @@ const News = (props)=>{
                 <h1 className="text-center" style={{ margin: '35px 0px', marginTop: '90px' }}>NewsBird - Top {capitalizeFirstLetter(props.category)} Headlines</h1>
                 {loading && <Spinner />}
                 <InfiniteScroll
-                    dataLength={articles.length}
+                    dataLength={safeArticles.length}
                     next={fetchMoreData}
-                    hasMore={articles.length !== totalResults}
+                    hasMore={safeArticles.length < totalResults}
                     loader={<Spinner/>}
                 > 
                     <div className="container">
                          
                     <div className="row">
-                        {articles.map((element) => {
+                        {safeArticles.map((element) => {
                             return <div className="col-md-4" key={element.url}>
                                 <NewsItem title={element.title ? element.title : ""} description={element.description ? element.description : ""} imageUrl={element.urlToImage} newsUrl={element.url} author={element.author} publishedAt
                                 
-                                ={element.publishedAt} source={element.source.name} />
+                                ={element.publishedAt} source={element.source?.name || "Unknown source"} />
                             </div>
                         })}
                     </div>
