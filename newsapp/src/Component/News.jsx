@@ -20,14 +20,26 @@ const News = (props)=>{
         props.setProgress(10);
         const url = `https://newsapi.org/v2/top-headlines?country=us&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`; 
         setLoading(true)
-        let data = await fetch(url);
-        props.setProgress(30);
-        let parsedData = await data.json()
-        props.setProgress(70);
-        setArticles(parsedData.articles)
-        setTotalResults(parsedData.totalResults)
-        setLoading(false)
-        props.setProgress(100);
+        try {
+            const data = await fetch(url);
+            props.setProgress(30);
+            const parsedData = await data.json();
+            props.setProgress(70);
+
+            if (!data.ok) {
+                throw new Error(parsedData.message || 'Unable to load news');
+            }
+
+            setArticles(Array.isArray(parsedData.articles) ? parsedData.articles : []);
+            setTotalResults(Number.isFinite(parsedData.totalResults) ? parsedData.totalResults : 0);
+        } catch (error) {
+            console.error('Unable to load news:', error);
+            setArticles([]);
+            setTotalResults(0);
+        } finally {
+            setLoading(false);
+            props.setProgress(100);
+        }
     }
 
     useEffect(() => {
@@ -40,10 +52,20 @@ const News = (props)=>{
     const fetchMoreData = async () => {   
         const url = `https://newsapi.org/v2/top-headlines?country=us&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
         setPage(page+1) 
-        let data = await fetch(url);
-        let parsedData = await data.json()
-        setArticles(articles.concat(parsedData.articles))
-        setTotalResults(parsedData.totalResults)
+        try {
+            const data = await fetch(url);
+            const parsedData = await data.json();
+
+            if (!data.ok) {
+                throw new Error(parsedData.message || 'Unable to load more news');
+            }
+
+            const nextArticles = Array.isArray(parsedData.articles) ? parsedData.articles : [];
+            setArticles((currentArticles) => currentArticles.concat(nextArticles));
+            setTotalResults(Number.isFinite(parsedData.totalResults) ? parsedData.totalResults : 0);
+        } catch (error) {
+            console.error('Unable to load more news:', error);
+        }
       };
  
         return (
